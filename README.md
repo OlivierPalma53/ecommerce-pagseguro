@@ -1,5 +1,2 @@
-# Projeto E-commerce
-
-Projeto desenvolvido do zero no [Curso de PHP 7](https://www.udemy.com/curso-completo-de-php-7/) disponível na plataforma da Udemy e no site do [HTML5dev.com.br](https://www.html5dev.com.br/curso/curso-completo-de-php-7).
-
-Template usado no projeto [Almsaeed Studio](https://almsaeedstudio.com)
+#Projeto desenvolvido para estudos de PHP7 e Slim Framework
+Prejeto em PHP 7 com slim framework, raintpl, guzzlehttp, e integração com Pagseguro 
