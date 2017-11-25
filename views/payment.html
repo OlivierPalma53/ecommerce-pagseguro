@@ -8,9 +8,9 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                
+
                 <div class="product-content-right">
-					
+
 						<div id="customer_details" class="col2-set">
 							<div class="row">
 								<div class="col-md-12">
@@ -20,7 +20,7 @@
 										{$msgError}
 									</div>
                                     {/if}
-                                    
+
                                     <div id="alert-error" class="alert alert-danger hide">
                                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
@@ -48,7 +48,7 @@
                                                     <a class="nav-link" data-toggle="tab" href="#tab-credito" role="tab">Cartão de Crédito</a>
                                                 </li>
                                             </ul>
-                                            
+
                                             <!-- Tab panes -->
                                             <div class="tab-content">
                                                 <div class="tab-pane" id="tab-boleto" role="tabpanel">
@@ -150,7 +150,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        
+
                                                         <div class="row">
                                                             <div class="col-sm-4">
                                                                     <div class="form-row form-row-wide address-field validate-required">
@@ -221,7 +221,7 @@
                                                                     <div class="contents"></div>
                                                                 </div>
                                                             </div>
-                                                        </div>                                                            
+                                                        </div>
 
                                                         <div class="form-row place-order">
                                                             <button type="submit" id="place_order_credit" name="woocommerce_checkout_place_order" class="button alt btn"><i class="fa fa-refresh fa-spin fa-fw margin-bottom hide"></i>Continuar</button>
@@ -239,8 +239,8 @@
 								</div>
 							</div>
 						</div>
-					
-				</div>                
+
+				</div>
 
             </div>
         </div>
@@ -265,3 +265,6 @@
     <option>{{quantity}}x de R${{installmentAmount}} com juros (R${{totalAmount}})</option>
 </script>
 <script src="{$pagseguro.urlJS}"></script>
+<script type="text/javascript">
+ PagSeguroDirectPayment.setSessionId('{$pagseguro.id}');
+</script>
