@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Hcode\Model;
 
@@ -7,6 +7,8 @@ use \Hcode\Model;
 use \Hcode\Model\Cart;
 
 class Order extends Model {
+
+	const SESSION = "OrderSession";
 
 	const SUCCESS = "Order-Success";
 	const ERROR = "Order-Error";
@@ -37,9 +39,9 @@ class Order extends Model {
 		$sql = new Sql();
 
 		$results = $sql->select("
-			SELECT * 
-			FROM tb_orders a 
-			INNER JOIN tb_ordersstatus b USING(idstatus) 
+			SELECT *
+			FROM tb_orders a
+			INNER JOIN tb_ordersstatus b USING(idstatus)
 			INNER JOIN tb_carts c USING(idcart)
 			INNER JOIN tb_users d ON d.iduser = a.iduser
 			INNER JOIN tb_addresses e USING(idaddress)
@@ -61,9 +63,9 @@ class Order extends Model {
 		$sql = new Sql();
 
 		return $sql->select("
-			SELECT * 
-			FROM tb_orders a 
-			INNER JOIN tb_ordersstatus b USING(idstatus) 
+			SELECT *
+			FROM tb_orders a
+			INNER JOIN tb_ordersstatus b USING(idstatus)
 			INNER JOIN tb_carts c USING(idcart)
 			INNER JOIN tb_users d ON d.iduser = a.iduser
 			INNER JOIN tb_addresses e USING(idaddress)
@@ -154,8 +156,8 @@ class Order extends Model {
 
 		$results = $sql->select("
 			SELECT SQL_CALC_FOUND_ROWS *
-			FROM tb_orders a 
-			INNER JOIN tb_ordersstatus b USING(idstatus) 
+			FROM tb_orders a
+			INNER JOIN tb_ordersstatus b USING(idstatus)
 			INNER JOIN tb_carts c USING(idcart)
 			INNER JOIN tb_users d ON d.iduser = a.iduser
 			INNER JOIN tb_addresses e USING(idaddress)
@@ -183,8 +185,8 @@ class Order extends Model {
 
 		$results = $sql->select("
 			SELECT SQL_CALC_FOUND_ROWS *
-			FROM tb_orders a 
-			INNER JOIN tb_ordersstatus b USING(idstatus) 
+			FROM tb_orders a
+			INNER JOIN tb_ordersstatus b USING(idstatus)
 			INNER JOIN tb_carts c USING(idcart)
 			INNER JOIN tb_users d ON d.iduser = a.iduser
 			INNER JOIN tb_addresses e USING(idaddress)
@@ -205,6 +207,16 @@ class Order extends Model {
 			'pages'=>ceil($resultTotal[0]["nrtotal"] / $itemsPerPage)
 		];
 
+	}
+
+	public function toSession(){
+
+		$_SESSION[Order::SESSION] = $this->getValues();
+
+	}
+
+	public function getFromSession(){
+		$this->setData($_SESSION[Order::SESSION]);
 	}
 
 }

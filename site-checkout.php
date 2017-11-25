@@ -125,7 +125,9 @@ $app->post("/checkout", function(){
 
 	$order->save();
 
-	header("Location: /order/".$order->getidorder());
+	$order->toSession();
+
+	header("Location: /payment");
 	exit;
 
 });
@@ -157,7 +159,7 @@ $app->get("/boleto/:idorder", function($idorder){
 	// DADOS DO BOLETO PARA O SEU CLIENTE
 	$dias_de_prazo_para_pagamento = 10;
 	$taxa_boleto = 5.00;
-	$data_venc = date("d/m/Y", time() + ($dias_de_prazo_para_pagamento * 86400));  // Prazo de X dias OU informe data: "13/04/2006"; 
+	$data_venc = date("d/m/Y", time() + ($dias_de_prazo_para_pagamento * 86400));  // Prazo de X dias OU informe data: "13/04/2006";
 
 	$valor_cobrado = formatPrice($order->getvltotal()); // Valor - REGRA: Sem pontos na milhar e tanto faz com "." ou "," ou com 1 ou 2 ou sem casa decimal
 	$valor_cobrado = str_replace(".", "", $valor_cobrado);
@@ -188,7 +190,7 @@ $app->get("/boleto/:idorder", function($idorder){
 	// DADOS OPCIONAIS DE ACORDO COM O BANCO OU CLIENTE
 	$dadosboleto["quantidade"] = "";
 	$dadosboleto["valor_unitario"] = "";
-	$dadosboleto["aceite"] = "";		
+	$dadosboleto["aceite"] = "";
 	$dadosboleto["especie"] = "R$";
 	$dadosboleto["especie_doc"] = "";
 
