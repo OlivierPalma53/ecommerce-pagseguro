@@ -8,9 +8,9 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                
+
                 <div class="product-content-right">
-					
+
 						<div id="customer_details" class="col2-set">
 							<div class="row">
 								<div class="col-md-12">
@@ -20,7 +20,7 @@
 										{$msgError}
 									</div>
                                     {/if}
-                                    
+
                                     <div id="alert-error" class="alert alert-danger hide">
                                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
@@ -48,7 +48,7 @@
                                                     <a class="nav-link" data-toggle="tab" href="#tab-credito" role="tab">Cartão de Crédito</a>
                                                 </li>
                                             </ul>
-                                            
+
                                             <!-- Tab panes -->
                                             <div class="tab-content">
                                                 <div class="tab-pane" id="tab-boleto" role="tabpanel">
@@ -154,7 +154,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        
+
                                                         <div class="row">
                                                             <div class="col-sm-4">
                                                                     <div class="form-row form-row-wide address-field validate-required">
@@ -225,7 +225,7 @@
                                                                     <div class="contents"></div>
                                                                 </div>
                                                             </div>
-                                                        </div>                                                            
+                                                        </div>
 
                                                         <div class="form-row place-order">
                                                             <button type="submit" id="place_order_credit" name="woocommerce_checkout_place_order" class="button alt btn"><i class="fa fa-refresh fa-spin fa-fw margin-bottom hide"></i>Continuar</button>
@@ -243,8 +243,8 @@
 								</div>
 							</div>
 						</div>
-					
-				</div>                
+
+				</div>
 
             </div>
         </div>
@@ -286,7 +286,7 @@ scripts.push(function(){
     PagSeguroDirectPayment.getPaymentMethods({
         amount: parseFloat("{$order.vltotal}"),
         success: function(response) {
-            
+
             var tplDebit = Handlebars.compile($("#tpl-payment-debit").html());
             var tplCredit = Handlebars.compile($("#tpl-payment-credit").html());
 
@@ -317,7 +317,7 @@ scripts.push(function(){
 
         },
         error: function(response) {
-            
+
             var errors = [];
 
             for (var code in response.errors)
@@ -326,12 +326,12 @@ scripts.push(function(){
             }
 
             showError(errors.toString());
-            
+
 
         },
         complete: function(response) {
-            
-                        
+
+
 
         }
     });
@@ -345,17 +345,17 @@ scripts.push(function(){
             PagSeguroDirectPayment.getBrand({
                 cardBin: value.substring(0, 6),
                 success: function(response) {
-                    
+
                     $("#brand_field").val(response.brand.name);
-                    
+
                     PagSeguroDirectPayment.getInstallments({
                         amount: parseFloat("{$order.vltotal}"),
                         brand: response.brand.name,
                         maxInstallmentNoInterest: parseInt("{$pagseguro.maxInstallmentNoInterest}"),
                         success: function(response) {
-                            
+
                             $("#installments_field").html('<option disabled="disabled"></option>');
-                            
+
                             var tplInstallmentFree = Handlebars.compile($("#tpl-installment-free").html());
                             var tplInstallment = Handlebars.compile($("#tpl-installment").html());
 
@@ -396,7 +396,7 @@ scripts.push(function(){
 
                         },
                         error: function(response) {
-                            
+
                             var errors = [];
 
                             for (var code in response.errors)
@@ -414,7 +414,7 @@ scripts.push(function(){
 
                 },
                 error: function(response) {
-                    
+
                     var errors = [];
 
                     for (var code in response.errors)
@@ -484,10 +484,16 @@ scripts.push(function(){
             expirationMonth: params.month,
             expirationYear: params.year,
             success: function(response) {
-                
-                console.log("TOKEN", response.card.token);
-                console.log("HASH", PagSeguroDirectPayment.getSenderHash());
-                console.log("params", params);
+
+              params.token = response.card.token;
+              params.hash = PagSeguroDirectPayment.getSenderHash();
+              $.post(
+                  "/payment/credit",
+                  $.param(params),
+                  function(r){
+                      console.log(r);
+                  }
+              );
 
             },
             error: function(response) {
@@ -501,8 +507,8 @@ scripts.push(function(){
                 showError(errors.toString());
             },
             complete: function(response) {
-                
-                $("#form-credit [type=submit]").removeAttr("disabled");                
+
+                $("#form-credit [type=submit]").removeAttr("disabled");
 
             }
         });
