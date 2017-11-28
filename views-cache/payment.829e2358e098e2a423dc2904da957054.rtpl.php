@@ -8,9 +8,9 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                
+
                 <div class="product-content-right">
-					
+
 						<div id="customer_details" class="col2-set">
 							<div class="row">
 								<div class="col-md-12">
@@ -23,7 +23,7 @@
 									</div>
                                     <?php } ?>
 
-                                    
+
                                     <div id="alert-error" class="alert alert-danger hide">
                                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
@@ -51,7 +51,7 @@
                                                     <a class="nav-link" data-toggle="tab" href="#tab-credito" role="tab">Cartão de Crédito</a>
                                                 </li>
                                             </ul>
-                                            
+
                                             <!-- Tab panes -->
                                             <div class="tab-content">
                                                 <div class="tab-pane" id="tab-boleto" role="tabpanel">
@@ -157,7 +157,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        
+
                                                         <div class="row">
                                                             <div class="col-sm-4">
                                                                     <div class="form-row form-row-wide address-field validate-required">
@@ -230,7 +230,7 @@
                                                                     <div class="contents"></div>
                                                                 </div>
                                                             </div>
-                                                        </div>                                                            
+                                                        </div>
 
                                                         <div class="form-row place-order">
                                                             <button type="submit" id="place_order_credit" name="woocommerce_checkout_place_order" class="button alt btn"><i class="fa fa-refresh fa-spin fa-fw margin-bottom hide"></i>Continuar</button>
@@ -248,8 +248,8 @@
 								</div>
 							</div>
 						</div>
-					
-				</div>                
+
+				</div>
 
             </div>
         </div>
@@ -279,167 +279,186 @@ PagSeguroDirectPayment.setSessionId('<?php echo htmlspecialchars( $pagseguro["id
 </script>
 <script>
 scripts.push(function(){
-
     function showError(error)
     {
-
         $("#alert-error span.msg").text(error);
         $("#alert-error").removeClass("hide");
-
     }
-
     PagSeguroDirectPayment.getPaymentMethods({
         amount: parseFloat("<?php echo htmlspecialchars( $order["vltotal"], ENT_COMPAT, 'UTF-8', FALSE ); ?>"),
         success: function(response) {
-            
+
             var tplDebit = Handlebars.compile($("#tpl-payment-debit").html());
             var tplCredit = Handlebars.compile($("#tpl-payment-credit").html());
-
             $.each(response.paymentMethods.ONLINE_DEBIT.options, function(index, option){
-
                 $("#tab-debito .contents").append(tplDebit({
                     value:option.name,
                     image:option.images.MEDIUM.path,
                     text:option.displayName
                 }));
-
             });
-
             $.each(response.paymentMethods.CREDIT_CARD.options, function(index, option){
-
                 $("#tab-credito .contents").append(tplCredit({
                     name:option.name,
                     image:option.images.MEDIUM.path
                 }));
-
             });
-
             $("#loading").hide();
-
             $("#tabs-methods .nav-link:first").tab("show");
-
             $("#payment-methods").removeClass("hide");
-
         },
         error: function(response) {
-            
-            var errors = [];
 
+            var errors = [];
             for (var code in response.errors)
             {
                 errors.push(response.errors[code]);
             }
-
             showError(errors.toString());
-            
 
         },
         complete: function(response) {
-            
-                        
+
 
         }
     });
-
+    $("#installments_field").on("change", function(){
+        var installment = $(this).find("option:selected").data("installment");
+        console.log(installment);
+        $("[name=installments_qtd]").val(installment.quantity);
+        $("[name=installments_value]").val(installment.installmentAmount);
+        $("[name=installments_total]").val(installment.totalAmount);
+    });
     $("#number_field").on("change", function(){
-
         var value  = $(this).val();
-
         if (value.length >= 6) {
-
             PagSeguroDirectPayment.getBrand({
                 cardBin: value.substring(0, 6),
                 success: function(response) {
-                    
+
                     $("#brand_field").val(response.brand.name);
-                    
+
                     PagSeguroDirectPayment.getInstallments({
                         amount: parseFloat("<?php echo htmlspecialchars( $order["vltotal"], ENT_COMPAT, 'UTF-8', FALSE ); ?>"),
                         brand: response.brand.name,
                         maxInstallmentNoInterest: parseInt("<?php echo htmlspecialchars( $pagseguro["maxInstallmentNoInterest"], ENT_COMPAT, 'UTF-8', FALSE ); ?>"),
                         success: function(response) {
-                            
+
                             $("#installments_field").html('<option disabled="disabled"></option>');
-                            
+
                             var tplInstallmentFree = Handlebars.compile($("#tpl-installment-free").html());
                             var tplInstallment = Handlebars.compile($("#tpl-installment").html());
-
                             var formatReal = {
                                 minimumFractionDigits:2,
                                 style:"currency",
                                 currency:"BRL"
                             };
-
                             $.each(response.installments[$("#brand_field").val()], function(index, installment){
-
                                 if (parseInt("<?php echo htmlspecialchars( $pagseguro["maxInstallment"], ENT_COMPAT, 'UTF-8', FALSE ); ?>") > index) {
-
                                     if (installment.interestFree === true) {
-
                                         var $option = $(tplInstallmentFree({
                                             quantity:installment.quantity,
                                             installmentAmount:installment.installmentAmount.toLocaleString('pt-BR', formatReal)
                                         }));
-
                                     } else {
-
                                         var $option = $(tplInstallment({
                                             quantity:installment.quantity,
                                             installmentAmount:installment.installmentAmount.toLocaleString('pt-BR', formatReal),
                                             totalAmount:installment.totalAmount.toLocaleString('pt-BR', formatReal)
                                         }));
-
                                     }
-
                                     $option.data("installment", installment);
-
                                     $("#installments_field").append($option);
-
                                 }
-
                             });
-
-                            console.log(response);
-
                         },
                         error: function(response) {
-                            
-                            var errors = [];
 
+                            var errors = [];
                             for (var code in response.errors)
                             {
                                 errors.push(response.errors[code]);
                             }
-
                             showError(errors.toString());
-
                         },
                         complete: function(response) {
                             //tratamento comum para todas chamadas
                         }
                     });
-
                 },
                 error: function(response) {
-                    
-                    var errors = [];
 
+                    var errors = [];
                     for (var code in response.errors)
                     {
                         errors.push(response.errors[code]);
                     }
-
                     showError(errors.toString());
-
                 },
                 complete: function(response) {
                     //tratamento comum para todas chamadas
                 }
             });
-
         }
-
     });
+    function isValidCPF(number) {
+        var sum;
+        var rest;
+        sum = 0;
+        if (number == "00000000000") return false;
+        for (i=1; i<=9; i++) sum = sum + parseInt(number.substring(i-1, i)) * (11 - i);
+        rest = (sum * 10) % 11;
+        if ((rest == 10) || (rest == 11))  rest = 0;
+        if (rest != parseInt(number.substring(9, 10)) ) return false;
+        sum = 0;
+        for (i = 1; i <= 10; i++) sum = sum + parseInt(number.substring(i-1, i)) * (12 - i);
+        rest = (sum * 10) % 11;
+        if ((rest == 10) || (rest == 11))  rest = 0;
+        if (rest != parseInt(number.substring(10, 11) ) ) return false;
+        return true;
+    }
+    $("#form-credit").on("submit", function(e){
+        e.preventDefault();
+        if (!isValidCPF($("#form-credit [name=cpf]").val())) {
+            showError("Este número de CPF não é válido.");
+            return false;
+        }
+        $("#form-credit [type=submit]").attr("disabled", "disabled");
+        var formData = $(this).serializeArray();
+        var params = {};
+        $.each(formData, function(index, field){
+            params[field.name] = field.value;
+        });
+        PagSeguroDirectPayment.createCardToken({
+            cardNumber: params.number,
+            cvv: params.cvv,
+            expirationMonth: params.month,
+            expirationYear: params.year,
+            success: function(response) {
 
+                params.token = response.card.token;
+                params.hash = PagSeguroDirectPayment.getSenderHash();
+                $.post(
+                    "/payment/credit",
+                    $.param(params),
+                    function(r){
+                        console.log(r);
+                    }
+                );
+            },
+            error: function(response) {
+                var errors = [];
+                for (var code in response.errors)
+                {
+                    errors.push(response.errors[code]);
+                }
+                showError(errors.toString());
+            },
+            complete: function(response) {
+
+                $("#form-credit [type=submit]").removeAttr("disabled");
+            }
+        });
+    });
 });
 </script>

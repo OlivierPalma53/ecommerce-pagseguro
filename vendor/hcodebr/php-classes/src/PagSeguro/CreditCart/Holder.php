@@ -1,5 +1,14 @@
 <?php
+
 namespace Hcode\PagSeguro\CreditCard;
+
+use Exception;
+use DOMDocument;
+use DOMElement;
+use DateTime;
+use Hcode\PagSeguro\Document;
+use Hcode\PagSeguro\Phone;
+
 class Holder {
     private $name;
     private $cpf;
@@ -38,7 +47,7 @@ class Holder {
         $cpf = $documents->appendChild($cpf);
         $phone = $this->phone->getDOMElement();
         $phone = $dom->importNode($phone, true);
-        $phone = $documents->appendChild($phone);
+        $phone = $holder->appendChild($phone);
         return $holder;
     }
 }

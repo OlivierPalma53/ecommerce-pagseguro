@@ -2,6 +2,10 @@
 
   namespace Hcode\PagSeguro;
 
+  use Exception;
+  use DOMDocument;
+  use DOMElement;
+
   class Address{
     private $street;
     private $number;
@@ -60,7 +64,7 @@
         $this->state = $state;
         $this->country = $country;
     }
-    public function getDOMElement($node = "addreess"):DOMElement
+    public function getDOMElement($node = "address"):DOMElement
     {
         $dom = new DOMDocument();
         $address = $dom->createElement($node);

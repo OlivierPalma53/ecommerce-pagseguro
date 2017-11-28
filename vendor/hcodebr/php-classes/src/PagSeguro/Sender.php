@@ -2,6 +2,11 @@
 
   namespace Hcode\PagSeguro;
 
+  use Exception;
+  use DOMDocument;
+  use DOMElement;
+  use DateTime;
+
   class Sender{
 
     private $name;
@@ -58,7 +63,7 @@
         $cpf = $documents->appendChild($cpf);
         $phone = $this->phone->getDOMElement();
         $phone = $dom->importNode($phone, true);
-        $phone = $documents->appendChild($phone);
+        $phone = $sender->appendChild($phone);
         $hash = $dom->createElement("hash", $this->hash);
         $hash = $sender->appendChild($hash);
         $ip = $dom->createElement("ip", $this->ip);

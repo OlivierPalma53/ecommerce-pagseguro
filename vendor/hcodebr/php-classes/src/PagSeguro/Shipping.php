@@ -2,6 +2,10 @@
 
   namespace Hcode\PagSeguro;
 
+  use Exception;
+  use DOMDocument;
+  use DOMElement;
+
   class CreditCart{
     const PAC = 1;
     const SEDEX = 2;

@@ -2,6 +2,10 @@
 
   namespace Hcode\PagSeguro;
 
+  use Exception;
+  use DOMDocument;
+  use DOMElement;
+
   class Phone{
 
     private $type;
@@ -24,7 +28,8 @@
       $this->value = $value;
     }
 
-    public static function isValidCPF($number):boolean{
+    public static function isValidCPF($number):bool
+    {
       $number = preg_replace('/[^0-9]/', '', (string) $number);
 
     if (strlen($number) != 11)
